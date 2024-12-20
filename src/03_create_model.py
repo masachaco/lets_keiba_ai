@@ -100,7 +100,7 @@ def main():
     model = learn(dataset[["ninki", "umaban", "is_win"]])
     predict_dataset = get_predict_data()
     predict_result = model.predict(predict_dataset[["ninki","umaban"]])
-    win_rate = list(map(lambda x: x[1], predict_result))
+    win_rate = list(map(lambda x: x, predict_result))
     predict_dataset["win_rate"] = pd.DataFrame(win_rate)
     predict_dataset.sort_values("win_rate", ascending=False, inplace=True)
     print(predict_dataset[["chakujun", "ninki", "win_rate","bamei"]])
