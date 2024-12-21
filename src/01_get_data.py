@@ -15,7 +15,7 @@ def get_data():
             return cur.fetchall()
 
 def main():
-    print(get_data())
+    display(get_data())
 
 if __name__ == '__main__':
-    main()  
+    main()

@@ -40,8 +40,8 @@ def get_data():
                 -- 芝
                 -- and 10 <= cast(ra.track_code as integer) and cast(track_code as integer) <= 22
                 -- ダート
-                -- and (23 <= cast(ra.track_code as integer) and cast(track_code as integer) <= 26) or (cast(track_code as integer) == 29)
-                and 2020 <= cast(ra.kaisai_nen as integer) and  cast(ra.kaisai_nen as integer) <= 2023
+                and (23 <= cast(ra.track_code as integer) and cast(track_code as integer) <= 26)
+                and 2023 <= cast(ra.kaisai_nen as integer) and  cast(ra.kaisai_nen as integer) <= 2023
                 and cast(kakutei_chakujun as integer) > 0
                     """
         return pd.read_sql(sql, con)
@@ -77,10 +77,11 @@ def get_predict_data():
                 (se.kaisai_nen || se.kaisai_tsukihi || se.keibajo_code || se.race_bango) = all_race_soha_time_milli_summary.race_id
                 and se.ketto_toroku_bango = all_race_soha_time_milli_summary.ketto_toroku_bango
             where
+                -- https://race.netkeiba.com/race/result.html?race_id=202406050207
                 ra.kaisai_nen = '2024'
-                and ra.kaisai_tsukihi = '1208'
+                and ra.kaisai_tsukihi = '1201'
                 and ra.keibajo_code = '06'
-                and ra.race_bango = '03'
+                and ra.race_bango = '07'
                     """
         return pd.read_sql(sql, con)
 
@@ -124,10 +125,10 @@ def main():
     model = learn(dataset[["ninki", "umaban", "is_win","time_avg","time_min","time_recent"]])
     predict_dataset = get_predict_data()
     predict_result = model.predict(predict_dataset[["ninki","umaban","time_avg","time_min","time_recent"]])
-    win_rate = list(map(lambda x: x[1], predict_result))
+    win_rate = list(map(lambda x: x, predict_result))
     predict_dataset["win_rate"] = pd.DataFrame(win_rate)
     predict_dataset.sort_values("win_rate", ascending=False, inplace=True)
-    print(predict_dataset[["chakujun", "ninki", "win_rate","bamei"]])
+    display(predict_dataset[["chakujun", "ninki", "win_rate","bamei"]])
 
 if __name__ == '__main__':
     main()
